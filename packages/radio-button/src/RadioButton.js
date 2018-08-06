@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { CheckboxBehavior } from "@hig/checkbox";
 
 import RadioButtonPresenter from "./presenters/RadioButtonPresenter";
 
@@ -52,42 +51,42 @@ export default class RadioButton extends Component {
     value: PropTypes.string
   };
 
-  render() {
-    const {
-      checked: controlledChecked,
-      defaultChecked,
-      disabled,
-      label,
-      name,
-      onBlur,
-      onChange,
-      onClick,
-      onFocus,
-      required,
-      value
-    } = this.props;
+  static defaultProps = {
+    defaultChecked: false
+  };
 
+  state = {
+    checked: this.props.defaultChecked
+  };
+
+  /**
+   * @param {MouseEvent} event
+   */
+  handleChange = event => {
+    if (this.props.onChange) {
+      this.props.onChange(event);
+    }
+
+    this.setState({
+      checked: this.props.value
+    });
+  };
+
+  isChecked() {
+    if (this.props.checked !== undefined) {
+      return this.props.checked;
+    }
+
+    return this.state.checked === this.props.value;
+  }
+
+  render() {
     return (
-      <CheckboxBehavior
-        checked={controlledChecked}
-        defaultChecked={defaultChecked}
-        onChange={onChange}
-        onClick={onClick}
-      >
-        {({ checked, handleClick }) => (
-          <RadioButtonPresenter
-            checked={checked}
-            disabled={disabled}
-            label={label}
-            name={name}
-            onBlur={onBlur}
-            onClick={handleClick}
-            onFocus={onFocus}
-            required={required}
-            value={value}
-          />
-        )}
-      </CheckboxBehavior>
+      <RadioButtonPresenter
+        {...this.props}
+        checked={this.isChecked()}
+        onChange={this.handleChange}
+      />
     );
   }
 }
